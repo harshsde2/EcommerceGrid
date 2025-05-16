@@ -2,10 +2,10 @@ import {
   users, type User, type InsertUser,
   products, type Product, type InsertProduct
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
-// modify the interface with any CRUD methods
-// you might need
-
+// Interface for all storage operations
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
@@ -20,78 +20,84 @@ export interface IStorage {
   deleteProduct(id: number): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private products: Map<number, Product>;
-  private userCurrentId: number;
-  private productCurrentId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.products = new Map();
-    this.userCurrentId = 1;
-    this.productCurrentId = 1;
-  }
-
-  // User operations
+// Database implementation using PostgreSQL and Drizzle ORM
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
-  // Product operations
   async getAllProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
+    return await db.select().from(products);
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
-    return this.products.get(id);
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const id = this.productCurrentId++;
-    const product: Product = { 
-      id,
-      title: insertProduct.title,
-      description: insertProduct.description || null,
-      imageUrl: insertProduct.imageUrl,
-      url: insertProduct.url,
-      price: insertProduct.price || null,
-      domain: insertProduct.domain || null,
-      category: insertProduct.category || null
-    };
-    this.products.set(id, product);
+    const [product] = await db
+      .insert(products)
+      .values({
+        title: insertProduct.title,
+        description: insertProduct.description || null,
+        imageUrl: insertProduct.imageUrl,
+        url: insertProduct.url,
+        price: insertProduct.price || null,
+        domain: insertProduct.domain || null,
+        category: insertProduct.category || null
+      })
+      .returning();
     return product;
   }
 
   async updateProduct(id: number, updateData: Partial<InsertProduct>): Promise<Product> {
-    const existingProduct = this.products.get(id);
+    const dataToUpdate: Partial<Product> = {};
     
-    if (!existingProduct) {
+    if (updateData.title !== undefined) dataToUpdate.title = updateData.title;
+    if (updateData.description !== undefined) dataToUpdate.description = updateData.description || null;
+    if (updateData.imageUrl !== undefined) dataToUpdate.imageUrl = updateData.imageUrl;
+    if (updateData.url !== undefined) dataToUpdate.url = updateData.url;
+    if (updateData.price !== undefined) dataToUpdate.price = updateData.price || null;
+    if (updateData.domain !== undefined) dataToUpdate.domain = updateData.domain || null;
+    if (updateData.category !== undefined) dataToUpdate.category = updateData.category || null;
+    
+    const [updatedProduct] = await db
+      .update(products)
+      .set(dataToUpdate)
+      .where(eq(products.id, id))
+      .returning();
+    
+    if (!updatedProduct) {
       throw new Error(`Product with ID ${id} not found`);
     }
-    
-    const updatedProduct = { ...existingProduct, ...updateData };
-    this.products.set(id, updatedProduct);
     
     return updatedProduct;
   }
 
   async deleteProduct(id: number): Promise<boolean> {
-    return this.products.delete(id);
+    const result = await db
+      .delete(products)
+      .where(eq(products.id, id))
+      .returning({ id: products.id });
+    
+    return result.length > 0;
   }
 }
 
-export const storage = new MemStorage();
+// Export an instance of DatabaseStorage for use throughout the application
+export const storage = new DatabaseStorage();
