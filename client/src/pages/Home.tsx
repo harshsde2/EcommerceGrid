@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Home() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const { data: products, isLoading, error } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -47,7 +47,7 @@ export default function Home() {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="electronics">Electronics</SelectItem>
                   <SelectItem value="clothing">Clothing</SelectItem>
                   <SelectItem value="home">Home & Kitchen</SelectItem>

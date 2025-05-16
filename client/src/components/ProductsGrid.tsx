@@ -19,7 +19,7 @@ export function ProductsGrid({ products, searchTerm, categoryFilter }: ProductsG
         || product.title.toLowerCase().includes(searchTerm.toLowerCase())
         || (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
       
-      const matchesCategory = !categoryFilter || product.category === categoryFilter;
+      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
       
       return matchesSearch && matchesCategory;
     });

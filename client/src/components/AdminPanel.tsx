@@ -48,7 +48,7 @@ export function AdminPanel() {
       // Validate input data
       const validData = addProductSchema.parse({
         url: productUrl,
-        category: category || undefined,
+        category: category === "none" ? undefined : category,
       });
       
       // Submit data
@@ -98,7 +98,7 @@ export function AdminPanel() {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Select a category</SelectItem>
+                <SelectItem value="none">Select a category</SelectItem>
                 <SelectItem value="electronics">Electronics</SelectItem>
                 <SelectItem value="clothing">Clothing</SelectItem>
                 <SelectItem value="home">Home & Kitchen</SelectItem>
