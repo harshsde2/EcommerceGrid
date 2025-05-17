@@ -1,0 +1,184 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Footer } from "@/components/Footer";
+import { AdminPanel } from "@/components/AdminPanel";
+import { ProductsGrid } from "@/components/ProductsGrid";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Product } from "@shared/schema";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "wouter";
+
+export default function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const { data: products, isLoading, error } = useQuery<Product[]>({
+    queryKey: ["/api/products"],
+  });
+
+  const handleAuthentication = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simple password protection - you can change this to a more secure value
+    if (password === "admin123") {
+      setIsAuthenticated(true);
+    } else {
+      alert("Incorrect password");
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <header className="bg-white shadow-sm sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <h1 className="text-xl md:text-2xl font-heading font-bold text-gray-800">
+                Shop Curator Admin
+              </h1>
+            </div>
+            <Link href="/" className="text-primary-500 hover:text-primary-600">
+              View Site
+            </Link>
+          </div>
+        </header>
+        
+        <main className="container mx-auto px-4 py-16 flex-grow flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-heading font-bold mb-6 text-center">Admin Login</h2>
+              <form onSubmit={handleAuthentication}>
+                <div className="mb-4">
+                  <Input
+                    type="password"
+                    placeholder="Enter admin password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <Button 
+                  type="submit"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 rounded-md"
+                >
+                  Login
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </main>
+        
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <h1 className="text-xl md:text-2xl font-heading font-bold text-gray-800">
+              Shop Curator Admin
+            </h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link href="/" className="text-primary-500 hover:text-primary-600">
+              View Site
+            </Link>
+            <Button 
+              onClick={() => setIsAuthenticated(false)}
+              variant="outline"
+              className="border-red-500 text-red-500 hover:bg-red-50"
+            >
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+      
+      <main className="container mx-auto px-4 py-6 flex-grow">
+        <AdminPanel />
+
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+          <h2 className="text-2xl font-heading font-bold mb-4 md:mb-0">Manage Products</h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="relative w-full sm:w-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <Input
+                type="text"
+                placeholder="Search products..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-auto">
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="electronics">Electronics</SelectItem>
+                  <SelectItem value="clothing">Clothing</SelectItem>
+                  <SelectItem value="home">Home & Kitchen</SelectItem>
+                  <SelectItem value="beauty">Beauty & Personal Care</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array(8).fill(0).map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <Skeleton className="h-64 w-full" />
+                <div className="p-4">
+                  <Skeleton className="h-4 w-20 mb-2" />
+                  <Skeleton className="h-6 w-3/4 mb-1" />
+                  <Skeleton className="h-4 w-1/2 mb-2" />
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-5 w-16" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-10">
+            <p className="text-red-500">Error loading products: {(error as Error).message}</p>
+          </div>
+        ) : (
+          <ProductsGrid 
+            products={products || []} 
+            searchTerm={searchTerm} 
+            categoryFilter={categoryFilter}
+          />
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { AdminPanel } from "@/components/AdminPanel";
 import { ProductsGrid } from "@/components/ProductsGrid";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,7 +9,6 @@ import { Product } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
-  const [isAdminMode, setIsAdminMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -20,10 +18,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header isAdminMode={isAdminMode} setIsAdminMode={setIsAdminMode} />
+      <Header />
       
       <main className="container mx-auto px-4 py-6 flex-grow">
-        {isAdminMode && <AdminPanel />}
 
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
           <h2 className="text-2xl font-heading font-bold mb-4 md:mb-0">Featured Products</h2>

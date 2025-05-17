@@ -1,13 +1,6 @@
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { Link } from "wouter";
 
-interface HeaderProps {
-  isAdminMode: boolean;
-  setIsAdminMode: (value: boolean) => void;
-}
-
-export function Header({ isAdminMode, setIsAdminMode }: HeaderProps) {
+export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -21,14 +14,9 @@ export function Header({ isAdminMode, setIsAdminMode }: HeaderProps) {
             Shop Curator
           </h1>
         </div>
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="admin-mode" className="text-sm">Admin</Label>
-          <Switch 
-            id="admin-mode" 
-            checked={isAdminMode} 
-            onCheckedChange={setIsAdminMode} 
-          />
-        </div>
+        <Link href="/admin" className="text-gray-500 hover:text-primary-500 text-sm">
+          Manage
+        </Link>
       </div>
     </header>
   );
