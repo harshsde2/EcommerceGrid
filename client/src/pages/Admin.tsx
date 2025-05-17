@@ -4,83 +4,18 @@ import { Footer } from "@/components/Footer";
 import { AdminPanel } from "@/components/AdminPanel";
 import { ProductsGrid } from "@/components/ProductsGrid";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Product } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 
 export default function Admin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const { data: products, isLoading, error } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
-
-  const handleAuthentication = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simple password protection - you can change this to a more secure value
-    if (password === "admin123") {
-      setIsAuthenticated(true);
-    } else {
-      alert("Incorrect password");
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <header className="bg-white shadow-sm sticky top-0 z-50">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
-              <h1 className="text-xl md:text-2xl font-heading font-bold text-gray-800">
-                Shop Curator Admin
-              </h1>
-            </div>
-            <Link href="/" className="text-primary-500 hover:text-primary-600">
-              View Site
-            </Link>
-          </div>
-        </header>
-        
-        <main className="container mx-auto px-4 py-16 flex-grow flex items-center justify-center">
-          <Card className="w-full max-w-md">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-heading font-bold mb-6 text-center">Admin Login</h2>
-              <form onSubmit={handleAuthentication}>
-                <div className="mb-4">
-                  <Input
-                    type="password"
-                    placeholder="Enter admin password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <Button 
-                  type="submit"
-                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 rounded-md"
-                >
-                  Login
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </main>
-        
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -96,18 +31,9 @@ export default function Admin() {
               Shop Curator Admin
             </h1>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/" className="text-primary-500 hover:text-primary-600">
-              View Site
-            </Link>
-            <Button 
-              onClick={() => setIsAuthenticated(false)}
-              variant="outline"
-              className="border-red-500 text-red-500 hover:bg-red-50"
-            >
-              Logout
-            </Button>
-          </div>
+          <Link href="/" className="text-primary-500 hover:text-primary-600">
+            View Site
+          </Link>
         </div>
       </header>
       

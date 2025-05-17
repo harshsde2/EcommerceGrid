@@ -119,10 +119,10 @@ export function AdminPanel() {
             </div>
             <Button 
               type="submit" 
-              className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-6 rounded-md shadow-md"
+              className="bg-primary-500 hover:bg-primary-600 font-bold py-2 px-6 rounded-md shadow-md"
               disabled={addProductMutation.isPending}
             >
-              {addProductMutation.isPending ? "Adding..." : "Add Product"}
+              <span className="text-white">{addProductMutation.isPending ? "Adding..." : "Add Product"}</span>
             </Button>
           </div>
         </form>
