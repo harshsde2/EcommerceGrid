@@ -11,6 +11,8 @@ interface ProductsGridProps {
 
 export function ProductsGrid({ products, searchTerm, categoryFilter }: ProductsGridProps) {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  // Check if we're on the admin page
+  const isAdminPage = window.location.pathname.includes('admin17122002');
 
   useEffect(() => {
     // Filter products based on search term and category
@@ -34,7 +36,7 @@ export function ProductsGrid({ products, searchTerm, categoryFilter }: ProductsG
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {filteredProducts.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} isAdmin={isAdminPage} />
       ))}
     </div>
   );
