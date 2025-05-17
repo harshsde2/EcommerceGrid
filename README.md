@@ -33,4 +33,4 @@ npm run dev
 - Express.js backend
 - PostgreSQL database
 - Tailwind CSS for styling
-- Shadcn/UI components
+- Shadcn/UI components# EcommerceGrid
