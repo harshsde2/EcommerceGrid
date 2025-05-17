@@ -1,5 +1,3 @@
-import { Link } from "wouter";
-
 export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -14,9 +12,6 @@ export function Header() {
             Shop Curator
           </h1>
         </div>
-        <Link href="/admin" className="text-gray-500 hover:text-primary-500 text-sm">
-          Manage
-        </Link>
       </div>
     </header>
   );
