@@ -17,13 +17,23 @@ export function ProductCard({ product, isAdmin = false }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const handleVisitClick = () => {
-    window.open(product.url, "_blank", "noopener,noreferrer");
-  };
-
+  if (!product.url) {
+    console.warn("No URL provided for this product");
+    return;
+  }
+  window.open(product.url, "_blank", "noopener,noreferrer");
+};
   const deleteProductMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest("DELETE", `/api/products/${product.id}`);
-    },
+   mutationFn: async () => {
+    try {
+      const res = await apiRequest("DELETE", `/api/products/${product.id}`);
+      console.log("Delete response:", res);
+      return res;
+    } catch (error) {
+      console.error("Delete error:", error);
+      throw error;
+    }
+  },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({
@@ -44,9 +54,9 @@ export function ProductCard({ product, isAdmin = false }: ProductCardProps) {
     setIsDeleting(true);
     deleteProductMutation.mutate();
   };
-
+  console.log("product.imageUrl", product.imageUrl);
   return (
-    <Card className="overflow-hidden flex flex-col h-full bg-white hover:shadow-lg transition-shadow">
+    <Card onClick={handleVisitClick} className="overflow-hidden flex flex-col h-full bg-white hover:shadow-lg transition-shadow">
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         {product.imageUrl && !imageError ? (
           <img 
@@ -80,14 +90,14 @@ export function ProductCard({ product, isAdmin = false }: ProductCardProps) {
           </p>
         </div>
         <div className="flex gap-2 mt-2">
-          <Button 
+          {/* <Button 
             variant="default" 
             size="sm" 
             className="flex-grow bg-primary-500 hover:bg-primary-600"
             onClick={handleVisitClick}
           >
-            <span className="text-white">View Product</span>
-          </Button>
+            <span className="text-black">View Product</span>
+          </Button> */}
           {isAdmin && (
             <Button 
               variant="outline" 
